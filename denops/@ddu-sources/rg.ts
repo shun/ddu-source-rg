@@ -15,11 +15,13 @@ export class Source extends BaseSource<Params> {
     sourceParams: Params;
   }): ReadableStream<Item<ActionData>[]> {
     const findby = async(input: string) => {
+      const cwd = await fn.getcwd(args.denops) as string;
       const p = Deno.run({
         cmd: ["rg", "--column", "--no-heading", "--color", "never", input],
         stdout: "piped",
         stderr: "piped",
         stdin: "null",
+        cwd: cwd,
       });
 
       const output = await p.output();
