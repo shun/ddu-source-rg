@@ -1,5 +1,8 @@
-import { Denops } from "https://raw.githubusercontent.com/Shougo/ddu.vim/da6e4ef/denops/ddu/deps.ts";
-import { BaseSource, Item } from "https://raw.githubusercontent.com/Shougo/ddu.vim/a8db8a8/denops/ddu/types.ts";
+import {
+  BaseSource,
+  Item,
+} from "https://deno.land/x/ddu_vim@v0.2.4/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.2.4/deps.ts";
 
 type DduRgParam = {
   input: string;
