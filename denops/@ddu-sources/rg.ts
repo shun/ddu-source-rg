@@ -8,7 +8,9 @@ type DduRgParam = {
   input: string;
 };
 
-type Params = Record<DduRgParam, unknown>;
+type Params = {
+  args: string[];
+};
 
 export class Source extends BaseSource<Params> {
   kind = "file";
@@ -18,9 +20,11 @@ export class Source extends BaseSource<Params> {
     sourceParams: Params;
   }): ReadableStream<Item<ActionData>[]> {
     const findby = async(input: string) => {
+      const cmd = ["rg", ...args.sourceParams.args, input];
+      console.log(cmd);
       const cwd = await fn.getcwd(args.denops) as string;
       const p = Deno.run({
-        cmd: ["rg", "--column", "--no-heading", "--color", "never", input],
+        cmd: cmd,
         stdout: "piped",
         stderr: "piped",
         stdin: "null",
@@ -65,6 +69,8 @@ export class Source extends BaseSource<Params> {
   }
 
   params(): Params {
-    return {};
+    return {
+      args: ["--column", "--no-heading", "--color", "never"]
+    };
   }
 }
