@@ -20,7 +20,7 @@ export class Source extends BaseSource<Params> {
     const findby = async(input: string) => {
       const cwd = await fn.getcwd(args.denops) as string;
       const p = Deno.run({
-        cmd: ["rg", "--column", "--no-heading", "--color", "never", input],
+        cmd: ["rg", "--column", "--no-heading", "--color",  "never", "--hidden", "--glob", "!.git/*", input],
         stdout: "piped",
         stderr: "piped",
         stdin: "null",
