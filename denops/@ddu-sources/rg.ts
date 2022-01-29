@@ -21,7 +21,6 @@ export class Source extends BaseSource<Params> {
   }): ReadableStream<Item<ActionData>[]> {
     const findby = async(input: string) => {
       const cmd = ["rg", ...args.sourceParams.args, input];
-      console.log(cmd);
       const cwd = await fn.getcwd(args.denops) as string;
       const p = Deno.run({
         cmd: cmd,
