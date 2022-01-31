@@ -1,10 +1,15 @@
-import { BaseSource, Item } from "https://deno.land/x/ddu_vim@v0.4.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.4.0/deps.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.1.0/file.ts#^";
+import {
+  BaseSource,
+  Item,
+} from "https://deno.land/x/ddu_vim@v0.2.4/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.2.4/deps.ts";
+
+type DduRgParam = {
+  input: string;
+};
 
 type Params = {
   args: string[];
-  input: string;
 };
 
 export class Source extends BaseSource<Params> {
@@ -14,7 +19,7 @@ export class Source extends BaseSource<Params> {
     denops: Denops;
     sourceParams: Params;
   }): ReadableStream<Item<ActionData>[]> {
-    const findby = async (input: string) => {
+    const findby = async(input: string) => {
       const cmd = ["rg", ...args.sourceParams.args, input];
       const cwd = await fn.getcwd(args.denops) as string;
       const p = Deno.run({
@@ -27,16 +32,18 @@ export class Source extends BaseSource<Params> {
 
       const output = await p.output();
       const list = new TextDecoder().decode(output).split(/\r?\n/);
-      const ret = list.filter((e) => !e).map((e) => {
+      const ret = list.map((e) => {
         const re = /^([^:]+):(\d+):(\d+):(.*)$/;
         const result = e.match(re);
         const get_param = (ary: string[], index: number) => {
-          return ary[index] ? ary[index] : "";
+          if (!ary) return "";
+          if (!ary[index]) return "";
+          return ary[index];
         };
 
-        const path = result ? get_param(result, 1) : "";
-        const lineNr = result ? parseInt(get_param(result, 2), 10) : 0;
-        const col = result ? parseInt(get_param(result, 3), 10) : 0;
+        const path = get_param(result, 1);;
+        const lineNr = get_param(result, 2);;
+        const col = get_param(result, 3);;
 
         return {
           word: e,
@@ -45,7 +52,7 @@ export class Source extends BaseSource<Params> {
             lineNr: lineNr,
             col: col,
           },
-        };
+        }
       });
       return ret;
     };
@@ -62,8 +69,7 @@ export class Source extends BaseSource<Params> {
 
   params(): Params {
     return {
-      args: ["--column", "--no-heading", "--color", "never"],
-      input: "",
+      args: ["--column", "--no-heading", "--color", "never"]
     };
   }
 }
