@@ -19,16 +19,15 @@ https://github.com/BurntSushi/ripgrep
 ## Configuration
 
 ```
-    call ddu#custom#patch_global({
-        \   'sourceParams' : {
-        \     'rg' : {
-        \       'args': ['--column', '--no-heading', '--color', 'never'],
-        \     },
-        \   },
-        \ })
+call ddu#custom#patch_global({
+    \   'sourceParams' : {
+    \     'rg' : {
+    \       'args': ['--column', '--no-heading', '--color', 'never'],
+    \     },
+    \   },
+    \ })
 ```
 
 ## Author
 
 KUDO Shunsuke (skudo_xx)
-
