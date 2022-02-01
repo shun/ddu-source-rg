@@ -27,7 +27,7 @@ export class Source extends BaseSource<Params> {
 
       const output = await p.output();
       const list = new TextDecoder().decode(output).split(/\r?\n/);
-      const ret = list.filter((e) => !e).map((e) => {
+      const ret = list.filter((e) => e).map((e) => {
         const re = /^([^:]+):(\d+):(\d+):(.*)$/;
         const result = e.match(re);
         const get_param = (ary: string[], index: number) => {
