@@ -35,8 +35,8 @@ export class Source extends BaseSource<Params> {
         };
 
         const path = result ? get_param(result, 1) : "";
-        const lineNr = result ? parseInt(get_param(result, 2), 10) : 0;
-        const col = result ? parseInt(get_param(result, 3), 10) : 0;
+        const lineNr = result ? Number(get_param(result, 2)) : 0;
+        const col = result ? Number(get_param(result, 3)) : 0;
 
         return {
           word: e,
