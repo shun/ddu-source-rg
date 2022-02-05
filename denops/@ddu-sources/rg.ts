@@ -1,10 +1,12 @@
 import { BaseSource, Item } from "https://deno.land/x/ddu_vim@v0.4.0/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.4.0/deps.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.1.0/file.ts#^";
+import { join } from "https://deno.land/std@0.123.0/path/mod.ts";
 
 type Params = {
   args: string[];
   input: string;
+  path: string;
 };
 
 export class Source extends BaseSource<Params> {
@@ -16,7 +18,9 @@ export class Source extends BaseSource<Params> {
   }): ReadableStream<Item<ActionData>[]> {
     const findby = async (input: string) => {
       const cmd = ["rg", ...args.sourceParams.args, input];
-      const cwd = await fn.getcwd(args.denops) as string;
+      const cwd = args.sourceParams.path != ""
+        ? args.sourceParams.path
+        : await fn.getcwd(args.denops) as string;
       const p = Deno.run({
         cmd: cmd,
         stdout: "piped",
@@ -41,12 +45,13 @@ export class Source extends BaseSource<Params> {
         return {
           word: e,
           action: {
-            path: path,
+            path: join(cwd, path),
             lineNr: lineNr,
             col: col,
           },
         };
       });
+
       return ret;
     };
 
@@ -64,6 +69,7 @@ export class Source extends BaseSource<Params> {
     return {
       args: ["--column", "--no-heading", "--color", "never"],
       input: "",
+      path: "",
     };
   }
 }
