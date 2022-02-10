@@ -1,7 +1,7 @@
-import { BaseSource, Item } from "https://deno.land/x/ddu_vim@v0.4.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.4.0/deps.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.1.0/file.ts#^";
-import { join } from "https://deno.land/std@0.123.0/path/mod.ts";
+import { BaseSource, Item } from "https://deno.land/x/ddu_vim@v0.10.0/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.10.0/deps.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.2.0/file.ts";
+import { join } from "https://deno.land/std@0.125.0/path/mod.ts";
 
 type Params = {
   args: string[];
@@ -35,12 +35,13 @@ export class Source extends BaseSource<Params> {
         const re = /^([^:]+):(\d+):(\d+):(.*)$/;
         const result = e.match(re);
         const get_param = (ary: string[], index: number) => {
-          return ary[index] ? ary[index] : "";
+          return ary[index] ?? "";
         };
 
         const path = result ? get_param(result, 1) : "";
         const lineNr = result ? Number(get_param(result, 2)) : 0;
         const col = result ? Number(get_param(result, 3)) : 0;
+        const text = result ? get_param(result, 4) : "";
 
         return {
           word: e,
@@ -48,6 +49,7 @@ export class Source extends BaseSource<Params> {
             path: join(cwd, path),
             lineNr: lineNr,
             col: col,
+            text: text,
           },
         };
       });
