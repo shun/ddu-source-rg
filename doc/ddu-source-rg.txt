@@ -55,6 +55,10 @@ args	(string[])
 input	(string)
         Search input string.
 
+                                                          *ddu-source-rg-live*
+live	(boolean)
+        If it is true, |ddu-option-input| is used for search.
+
                                                           *ddu-source-rg-path*
 path	(string)
         Search directory.

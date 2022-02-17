@@ -6,6 +6,7 @@ import { join } from "https://deno.land/std@0.125.0/path/mod.ts";
 type Params = {
   args: string[];
   input: string;
+  live: boolean;
   path: string;
 };
 
@@ -15,6 +16,7 @@ export class Source extends BaseSource<Params> {
   gather(args: {
     denops: Denops;
     sourceParams: Params;
+    input: string;
   }): ReadableStream<Item<ActionData>[]> {
     const findby = async (input: string) => {
       const cmd = ["rg", ...args.sourceParams.args, input];
@@ -59,9 +61,16 @@ export class Source extends BaseSource<Params> {
 
     return new ReadableStream({
       async start(controller) {
-        controller.enqueue(
-          await findby(args.sourceParams.input),
-        );
+        const input = args.sourceParams.live
+          ? args.input
+          : args.sourceParams.input;
+
+        if (input != "") {
+          controller.enqueue(
+            await findby(input),
+          );
+        }
+
         controller.close();
       },
     });
@@ -71,6 +80,7 @@ export class Source extends BaseSource<Params> {
     return {
       args: ["--column", "--no-heading", "--color", "never"],
       input: "",
+      live: false,
       path: "",
     };
   }
