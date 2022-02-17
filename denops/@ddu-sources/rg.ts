@@ -1,12 +1,11 @@
-import { BaseSource, Item } from "https://deno.land/x/ddu_vim@v0.10.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.10.0/deps.ts";
+import { BaseSource, DduOptions, Item } from "https://deno.land/x/ddu_vim@v0.14/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.14/deps.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.2.0/file.ts";
-import { join } from "https://deno.land/std@0.125.0/path/mod.ts";
+import { join } from "https://deno.land/std@0.126.0/path/mod.ts";
 
 type Params = {
   args: string[];
   input: string;
-  live: boolean;
   path: string;
 };
 
@@ -15,6 +14,7 @@ export class Source extends BaseSource<Params> {
 
   gather(args: {
     denops: Denops;
+    options: DduOptions;
     sourceParams: Params;
     input: string;
   }): ReadableStream<Item<ActionData>[]> {
@@ -61,7 +61,7 @@ export class Source extends BaseSource<Params> {
 
     return new ReadableStream({
       async start(controller) {
-        const input = args.sourceParams.live
+        const input = args.options.volatile
           ? args.input
           : args.sourceParams.input;
 
