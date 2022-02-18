@@ -3,7 +3,7 @@
 Author: KUDO Shunsuke <kudo.shunsuke.xx@gmail.com>
 License: MIT license
 
-CONTENTS                                              *ddu-source-rg-contents*
+CONTENTS					*ddu-source-rg-contents*
 
 Introduction    |ddu-source-rg-introduction|
 Install         |ddu-source-rg-install|
@@ -13,12 +13,12 @@ Params          |ddu-source-rg-params|
 
 
 ==============================================================================
-INTRODUCTION                                      *ddu-source-rg-introduction*
+INTRODUCTION					*ddu-source-rg-introduction*
 
 This source collects ripgrep result.
 
 ==============================================================================
-INSTALL                                                *ddu-source-rg-install*
+INSTALL						*ddu-source-rg-install*
 
 Please install below plugins.
 
@@ -29,38 +29,40 @@ And install below binary.
 https://github.com/BurntSushi/ripgrep
 
 ==============================================================================
-COMMANDS                                              *ddu-source-rg-commands*
+COMMANDS					*ddu-source-rg-commands*
 
-                                                                      *:DduRg*
+						*:DduRg*
 :DduRg
 	Search text by ripgrep.
 
 ==============================================================================
-EXAMPLES                                              *ddu-source-rg-examples*
+EXAMPLES					*ddu-source-rg-examples*
 
 >
     " 'word' specify what you want search word.
     call ddu#start({'sources': [{'name': 'rg'}, 'params': {'input': word}]})
 <
 ==============================================================================
-PARAMS                                                  *ddu-source-rg-params*
+PARAMS						*ddu-source-rg-params*
 
-                                                          *ddu-source-rg-args*
+						*ddu-source-rg-param-args*
 args	(string[])
-        Execute rg with args.
+	Execute rg with args.
 
-        Default: ["--column", "--no-heading", "--color", "never"]
+	Default: ["--column", "--no-heading", "--color", "never"]
 
-                                                          *ddu-source-rg-input*
+						*ddu-source-rg-param-input*
 input	(string)
-        Search input string.
+	Search input string.
+	Note: If |ddu-option-volatile| is true, |ddu-option-input| is used
+	instead.
 
-                                                          *ddu-source-rg-path*
+						*ddu-source-rg-param-path*
 path	(string)
-        Search directory.
-        If it is empty, |getcwd()| is used instead.
+	Search directory.
+	If it is empty, |getcwd()| is used instead.
 
-        Default: ""
+	Default: ""
 
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:
