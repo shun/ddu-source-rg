@@ -31,31 +31,75 @@ export class Source extends BaseSource<Params> {
         cwd: cwd,
       });
 
+      const parse_json = (list) => {
+        const ret = list.filter((e) => e).map((e) => {
+          const jo = JSON.parse(e);
+          if (jo['type'] === "match") {
+            const path = jo['data']['path']['text'];
+            const lineNr = jo['data']['line_number'];
+            const col = jo['data']['submatches'][0]['start'];
+            const text = jo['data']['lines']['text'].replace("\n", "");
+            const header = `${path}:${lineNr}:${col}: `;
+            return {
+              word: header + text,
+              action: {
+                path: join(cwd, path),
+                lineNr: lineNr,
+                col: col + 1,
+                text: text,
+              },
+              highlights:[
+                {
+                  name: "rg",
+                  "hl_group": "search",
+                  col: header.length + col + 1,
+                  width: jo['data']['submatches'][0]['end'] - col,
+                }
+              ]
+            };
+          }
+        }).filter((e) => e);
+
+        return ret;
+      };
+
+      const parse_line = () => {
+        const ret = list.filter((e) => e).map((e) => {
+          const re = /^([^:]+):(\d+):(\d+):(.*)$/;
+          const result = e.match(re);
+          const get_param = (ary: string[], index: number) => {
+            return ary[index] ?? "";
+          };
+
+          const path = result ? get_param(result, 1) : "";
+          const lineNr = result ? Number(get_param(result, 2)) : 0;
+          const col = result ? Number(get_param(result, 3)) : 0;
+          const text = result ? get_param(result, 4) : "";
+
+          return {
+            word: e,
+            action: {
+              path: join(cwd, path),
+              lineNr: lineNr,
+              col: col,
+              text: text,
+            },
+          };
+        });
+
+        return ret;
+      };
+
       const output = await p.output();
       const list = new TextDecoder().decode(output).split(/\r?\n/);
-      const ret = list.filter((e) => e).map((e) => {
-        const re = /^([^:]+):(\d+):(\d+):(.*)$/;
-        const result = e.match(re);
-        const get_param = (ary: string[], index: number) => {
-          return ary[index] ?? "";
-        };
 
-        const path = result ? get_param(result, 1) : "";
-        const lineNr = result ? Number(get_param(result, 2)) : 0;
-        const col = result ? Number(get_param(result, 3)) : 0;
-        const text = result ? get_param(result, 4) : "";
-
-        return {
-          word: e,
-          action: {
-            path: join(cwd, path),
-            lineNr: lineNr,
-            col: col,
-            text: text,
-          },
-        };
-      });
-
+      const ret = (() => {
+        if (args.sourceParams.args.includes("--json")) {
+          return parse_json(list);
+        } else {
+          return parse_line(list);
+        }
+      })();
       return ret;
     };
 
