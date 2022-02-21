@@ -1,4 +1,8 @@
-import { BaseSource, DduOptions, Item } from "https://deno.land/x/ddu_vim@v0.14/types.ts";
+import {
+  BaseSource,
+  DduOptions,
+  Item,
+} from "https://deno.land/x/ddu_vim@v0.14/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.14/deps.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.2.0/file.ts";
 import { join } from "https://deno.land/std@0.126.0/path/mod.ts";
@@ -34,11 +38,11 @@ export class Source extends BaseSource<Params> {
       const parse_json = (list) => {
         const ret = list.filter((e) => e).map((e) => {
           const jo = JSON.parse(e);
-          if (jo['type'] === "match") {
-            const path = jo['data']['path']['text'];
-            const lineNr = jo['data']['line_number'];
-            const col = jo['data']['submatches'][0]['start'];
-            const text = jo['data']['lines']['text'].replace("\n", "");
+          if (jo["type"] === "match") {
+            const path = jo["data"]["path"]["text"];
+            const lineNr = jo["data"]["line_number"];
+            const col = jo["data"]["submatches"][0]["start"];
+            const text = jo["data"]["lines"]["text"].replace("\n", "");
             const header = `${path}:${lineNr}:${col}: `;
             return {
               word: header + text,
@@ -48,14 +52,14 @@ export class Source extends BaseSource<Params> {
                 col: col + 1,
                 text: text,
               },
-              highlights:[
+              highlights: [
                 {
                   name: "rg",
                   "hl_group": "search",
                   col: header.length + col + 1,
-                  width: jo['data']['submatches'][0]['end'] - col,
-                }
-              ]
+                  width: jo["data"]["submatches"][0]["end"] - col,
+                },
+              ],
             };
           }
         }).filter((e) => e);
