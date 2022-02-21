@@ -51,6 +51,8 @@ args	(string[])
 
 	Default: ["--column", "--no-heading", "--color", "never"]
 
+	if you want to highlight the search word, should be set "--json".
+	e.g. ["--json"]
 						*ddu-source-rg-param-input*
 input	(string)
 	Search input string.
