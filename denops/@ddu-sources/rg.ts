@@ -38,11 +38,11 @@ export class Source extends BaseSource<Params> {
       const parse_json = (list) => {
         const ret = list.filter((e) => e).map((e) => {
           const jo = JSON.parse(e);
-          if (jo["type"] === "match") {
-            const path = jo["data"]["path"]["text"];
-            const lineNr = jo["data"]["line_number"];
-            const col = jo["data"]["submatches"][0]["start"];
-            const text = jo["data"]["lines"]["text"].replace("\n", "");
+          if (jo.type === "match") {
+            const path = jo.data.path.text;
+            const lineNr = jo.data.line_number;
+            const col = jo.data.submatches[0].start;
+            const text = jo.data.lines.text.replace("\n", "");
             const header = `${path}:${lineNr}:${col}: `;
             return {
               word: header + text,
@@ -57,7 +57,7 @@ export class Source extends BaseSource<Params> {
                   name: "rg",
                   "hl_group": "search",
                   col: header.length + col + 1,
-                  width: jo["data"]["submatches"][0]["end"] - col,
+                  width: jo.data.submatches[0].end - col,
                 },
               ],
             };
