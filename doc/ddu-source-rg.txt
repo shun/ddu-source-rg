@@ -66,5 +66,10 @@ path	(string)
 
 	Default: ""
 
+highlights	(list)
+	Highlight groups for path, lineNr and search word.
+	Default: "Normal" for path and lineNr.
+	Default: "Search" for word
+
 ==============================================================================
 vim:tw=78:ts=8:ft=help:norl:noet:fen:noet:

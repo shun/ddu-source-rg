@@ -7,10 +7,17 @@ import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.14/deps.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.2.0/file.ts";
 import { join } from "https://deno.land/std@0.126.0/path/mod.ts";
 
+type HighlightGroup = {
+  path?: string;
+  lineNr?: string;
+  word?: string;
+};
+
 type Params = {
   args: string[];
   input: string;
   path: string;
+  highlights?: HighlightGroup;
 };
 
 export class Source extends BaseSource<Params> {
@@ -36,6 +43,10 @@ export class Source extends BaseSource<Params> {
       });
 
       const parse_json = (list) => {
+        const hl_group_path = args.sourceParams.highlights?.path ?? "Normal";
+        const hl_group_lineNr = args.sourceParams.highlights?.lineNr ?? "Normal";
+        const hl_group_word = args.sourceParams.highlights?.word ?? "Search";
+
         const ret = list.filter((e) => e).map((e) => {
           const jo = JSON.parse(e);
           if (jo.type === "match") {
@@ -54,8 +65,20 @@ export class Source extends BaseSource<Params> {
               },
               highlights: [
                 {
-                  name: "rg",
-                  "hl_group": "search",
+                  name: "path",
+                  "hl_group": hl_group_path,
+                  col: 1,
+                  width: path.length,
+                },
+                {
+                  name: "lineNr",
+                  "hl_group": hl_group_lineNr,
+                  col: path.length + 2,
+                  width: String(lineNr).length,
+                },
+                {
+                  name: "word",
+                  "hl_group": hl_group_word,
                   col: header.length + col + 1,
                   width: jo.data.submatches[0].end - col,
                 },
