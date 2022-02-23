@@ -43,9 +43,9 @@ export class Source extends BaseSource<Params> {
       });
 
       const parse_json = (list) => {
-        const hl_group_path = args.sourceParams.highlights?.path ?? "Normal";
-        const hl_group_lineNr = args.sourceParams.highlights?.lineNr ?? "Normal";
-        const hl_group_word = args.sourceParams.highlights?.word ?? "Search";
+        const hl_group_path = args.sourceParams.highlights?.path ?? "";
+        const hl_group_lineNr = args.sourceParams.highlights?.lineNr ?? "";
+        const hl_group_word = args.sourceParams.highlights?.word ?? "";
 
         const ret = list.filter((e) => e).map((e) => {
           const jo = JSON.parse(e);
