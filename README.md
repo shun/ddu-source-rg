@@ -28,6 +28,20 @@ call ddu#custom#patch_global({
     \ })
 ```
 
+if you want to highlight the search word, should be set "--json".
+
+```
+e.g.
+
+call ddu#custom#patch_global({
+    \   'sourceParams' : {
+    \     'rg' : {
+    \       'args': ['--json'],
+    \     },
+    \   },
+    \ })
+```
+
 ## Author
 
 KUDO Shunsuke (skudo_xx)
