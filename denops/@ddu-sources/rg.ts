@@ -184,7 +184,10 @@ export class Source extends BaseSource<Params> {
           ]);
           proc.close();
           if (!status.success) {
-            console.error(new TextDecoder().decode(stderr));
+            const mes = new TextDecoder().decode(stderr);
+            if (!args.options.volatile || !mes.match(/regex parse error/)) {
+              console.error(mes);
+            }
           }
           controller.close();
         }
