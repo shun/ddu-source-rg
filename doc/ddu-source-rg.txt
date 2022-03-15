@@ -40,7 +40,7 @@ EXAMPLES					*ddu-source-rg-examples*
 
 >
     " 'word' specify what you want search word.
-    call ddu#start({'sources': [{'name': 'rg'}, 'params': {'input': word}]})
+    call ddu#start({'sources': [{'name': 'rg', 'params': {'input': word}}]})
 
     " live grep
     " You need to make "volatile" option v:true.
