@@ -13,16 +13,16 @@ import { TextProtoReader } from "https://deno.land/std@0.129.0/textproto/mod.ts"
 const enqueueSize1st = 1000;
 
 type HighlightGroup = {
-  path?: string;
-  lineNr?: string;
-  word?: string;
+  path: string;
+  lineNr: string;
+  word: string;
 };
 
 type Params = {
   args: string[];
   input: string;
   path: string;
-  highlights?: HighlightGroup;
+  highlights: HighlightGroup;
 };
 
 async function* iterLine(r: Deno.Reader): AsyncIterable<string> {
@@ -204,6 +204,11 @@ export class Source extends BaseSource<Params> {
       args: ["--column", "--no-heading", "--color", "never"],
       input: "",
       path: "",
+      highlights: {
+        path: "Normal",
+        lineNr: "Normal",
+        word: "Search",
+      },
     };
   }
 }
