@@ -59,6 +59,17 @@ EXAMPLES					*ddu-source-rg-examples*
             \   }},
             \ })
     endfunction
+
+    " If you want to narrow by filename, please install
+    " "ddu-filter-converter_display_word".
+    " https://github.com/Shougo/ddu-filter-converter_display_word
+    "call ddu#custom#patch_global({
+    "    \   'sourceOptions': {
+    "    \     'rg': {
+    "    \       'matchers': ['converter_display_word', 'matcher_substring'],
+    "    \     },
+    "    \   }
+    "    \ })
 <
 ==============================================================================
 PARAMS						*ddu-source-rg-params*

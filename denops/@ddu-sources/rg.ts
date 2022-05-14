@@ -105,7 +105,8 @@ export class Source extends BaseSource<Params> {
       const text = result ? get_param(result, 4) : "";
 
       return {
-        word: line,
+        word: text,
+        display: line,
         action: {
           path: join(cwd, path),
           lineNr: lineNr,
