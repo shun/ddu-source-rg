@@ -2,12 +2,12 @@ import {
   BaseSource,
   DduOptions,
   Item,
-import { TextProtoReader } from "https://deno.land/std@0.151.0/textproto/mod.ts";
 } from "https://deno.land/x/ddu_vim@v1.13.0/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.13.0/deps.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.1/file.ts";
 import { join } from "https://deno.land/std@0.165.0/path/mod.ts";
 import { abortable } from "https://deno.land/std@0.165.0/async/mod.ts";
+import { TextLineStream } from "https://deno.land/std@0.165.0/streams/mod.ts";
 
 const enqueueSize1st = 1000;
 
@@ -25,11 +25,14 @@ type Params = {
 };
 
 async function* iterLine(r: Deno.Reader): AsyncIterable<string> {
-  const reader = new TextProtoReader(BufReader.create(r));
-  while (true) {
-    const line = await reader.readLine();
-    if (!line) break;
-    yield line;
+  const lines = r.readable
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(new TextLineStream());
+
+  for await (const line of lines) {
+    if (line.length) {
+      yield line;
+    }
   }
 }
 
