@@ -47,11 +47,11 @@ export class Source extends BaseSource<Params> {
   }): ReadableStream<Item<ActionData>[]> {
     const abortController = new AbortController();
 
-    const hl_group_path = args.sourceParams.highlights?.path ?? "";
-    const hl_group_lineNr = args.sourceParams.highlights?.lineNr ?? "";
-    const hl_group_word = args.sourceParams.highlights?.word ?? "";
+    const hlGroupPath = args.sourceParams.highlights?.path ?? "";
+    const hlGroupLineNr = args.sourceParams.highlights?.lineNr ?? "";
+    const hlGroupWord = args.sourceParams.highlights?.word ?? "";
 
-    const parse_json = (line: string, cwd: string) => {
+    const parseJson = (line: string, cwd: string) => {
       line = line.trim();
 
       const jo = JSON.parse(line);
@@ -74,19 +74,19 @@ export class Source extends BaseSource<Params> {
         highlights: [
           {
             name: "path",
-            "hl_group": hl_group_path,
+            "hl_group": hlGroupPath,
             col: 1,
             width: path.length,
           },
           {
             name: "lineNr",
-            "hl_group": hl_group_lineNr,
+            "hl_group": hlGroupLineNr,
             col: path.length + 2,
             width: String(lineNr).length,
           },
           {
             name: "word",
-            "hl_group": hl_group_word,
+            "hl_group": hlGroupWord,
             col: header.length + col + 1,
             width: jo.data.submatches[0].end - col,
           },
@@ -94,17 +94,17 @@ export class Source extends BaseSource<Params> {
       };
     };
     const re = /^([^:]+):(\d+):(\d+):(.*)$/;
-    const parse_line = (line: string, cwd: string) => {
+    const parseLine = (line: string, cwd: string) => {
       line = line.trim();
       const result = line.match(re);
-      const get_param = (ary: string[], index: number) => {
+      const getParam = (ary: string[], index: number) => {
         return ary[index] ?? "";
       };
 
-      const path = result ? get_param(result, 1) : "";
-      const lineNr = result ? Number(get_param(result, 2)) : 0;
-      const col = result ? Number(get_param(result, 3)) : 0;
-      const text = result ? get_param(result, 4) : "";
+      const path = result ? getParam(result, 1) : "";
+      const lineNr = result ? Number(getParam(result, 2)) : 0;
+      const col = result ? Number(getParam(result, 3)) : 0;
+      const text = result ? getParam(result, 4) : "";
 
       return {
         word: text,
@@ -155,12 +155,12 @@ export class Source extends BaseSource<Params> {
             )
           ) {
             if (args.sourceParams.args.includes("--json")) {
-              const ret = parse_json(line, cwd);
+              const ret = parseJson(line, cwd);
               if (ret) {
                 items.push(ret);
               }
             } else {
-              items.push(parse_line(line, cwd));
+              items.push(parseLine(line, cwd));
             }
             if (items.length >= enqueueSize) {
               numChunks++;
