@@ -188,8 +188,10 @@ export class Source extends BaseSource<Params> {
           proc.close();
           if (!status.success) {
             const mes = new TextDecoder().decode(stderr);
-            if (mes.length > 0 && (!args.options.volatile ||
-                                   !mes.match(/regex parse error/))) {
+            if (
+              mes.length > 0 && (!args.options.volatile ||
+                !mes.match(/regex parse error/))
+            ) {
               console.error(mes);
             }
           }
