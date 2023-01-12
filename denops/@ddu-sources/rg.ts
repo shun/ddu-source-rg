@@ -2,12 +2,12 @@ import {
   BaseSource,
   DduOptions,
   Item,
-} from "https://deno.land/x/ddu_vim@v1.13.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.13.0/deps.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.1/file.ts";
-import { join } from "https://deno.land/std@0.165.0/path/mod.ts";
-import { abortable } from "https://deno.land/std@0.165.0/async/mod.ts";
-import { TextLineStream } from "https://deno.land/std@0.165.0/streams/mod.ts";
+} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.2/file.ts";
+import { join } from "https://deno.land/std@0.171.0/path/mod.ts";
+import { abortable } from "https://deno.land/std@0.171.0/async/mod.ts";
+import { TextLineStream } from "https://deno.land/std@0.171.0/streams/mod.ts";
 
 const enqueueSize1st = 1000;
 
@@ -24,14 +24,14 @@ type Params = {
   highlights: HighlightGroup;
 };
 
-async function* iterLine(r: Deno.Reader): AsyncIterable<string> {
-  const lines = r.readable
+async function* iterLine(r: ReadableStream<Uint8Array>): AsyncIterable<string> {
+  const lines = r
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(new TextLineStream());
 
   for await (const line of lines) {
-    if (line.length) {
-      yield line;
+    if ((line as string).length) {
+      yield line as string;
     }
   }
 }
@@ -67,9 +67,9 @@ export class Source extends BaseSource<Params> {
         word: header + text,
         action: {
           path: join(cwd, path),
-          lineNr: lineNr,
+          lineNr,
           col: col + 1,
-          text: text,
+          text,
         },
         highlights: [
           {
@@ -111,9 +111,9 @@ export class Source extends BaseSource<Params> {
         display: line,
         action: {
           path: join(cwd, path),
-          lineNr: lineNr,
-          col: col,
-          text: text,
+          lineNr,
+          col,
+          text,
         },
       };
     };
@@ -140,17 +140,17 @@ export class Source extends BaseSource<Params> {
         let numChunks = 0;
 
         const proc = Deno.run({
-          cmd: cmd,
+          cmd,
           stdout: "piped",
           stderr: "piped",
           stdin: "null",
-          cwd: cwd,
+          cwd,
         });
 
         try {
           for await (
             const line of abortable(
-              iterLine(proc.stdout),
+              iterLine(proc.stdout.readable),
               abortController.signal,
             )
           ) {
@@ -188,7 +188,10 @@ export class Source extends BaseSource<Params> {
           proc.close();
           if (!status.success) {
             const mes = new TextDecoder().decode(stderr);
-            if (!args.options.volatile || !mes.match(/regex parse error/)) {
+            if (
+              mes.length > 0 && (!args.options.volatile ||
+                !mes.match(/regex parse error/))
+            ) {
               console.error(mes);
             }
           }
