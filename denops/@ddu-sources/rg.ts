@@ -8,6 +8,7 @@ import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.2/file.ts";
 import { join } from "https://deno.land/std@0.171.0/path/mod.ts";
 import { abortable } from "https://deno.land/std@0.171.0/async/mod.ts";
 import { TextLineStream } from "https://deno.land/std@0.171.0/streams/mod.ts";
+import { ensureString } from "https://deno.land/x/unknownutil@v2.1.0/mod.ts";
 
 const enqueueSize1st = 1000;
 
@@ -22,6 +23,7 @@ type Params = {
   input: string;
   path: string;
   highlights: HighlightGroup;
+  kensaku: boolean;
 };
 
 async function* iterLine(r: ReadableStream<Uint8Array>): AsyncIterable<string> {
@@ -120,13 +122,19 @@ export class Source extends BaseSource<Params> {
 
     return new ReadableStream({
       async start(controller) {
-        const input = args.options.volatile
+        let input = args.options.volatile
           ? args.input
           : args.sourceParams.input;
 
         if (input == "") {
           controller.close();
           return;
+        }
+
+        if (args.sourceParams.kensaku) {
+          input = ensureString(
+            await args.denops.dispatch("kensaku", "query", input),
+          );
         }
 
         const cmd = ["rg", ...args.sourceParams.args, input];
