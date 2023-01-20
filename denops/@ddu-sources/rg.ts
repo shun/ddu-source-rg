@@ -21,6 +21,7 @@ type Params = {
   args: string[];
   input: string;
   path: string;
+  paths: string[];
   highlights: HighlightGroup;
 };
 
@@ -66,7 +67,8 @@ export class Source extends BaseSource<Params> {
       return {
         word: header + text,
         action: {
-          path: join(cwd, path),
+          // When paths given, path is absolute path
+          path: path.startsWith("/") ? path : join(cwd, path),
           lineNr,
           col: col + 1,
           text,
@@ -110,7 +112,8 @@ export class Source extends BaseSource<Params> {
         word: text,
         display: line,
         action: {
-          path: join(cwd, path),
+          // When paths given, path is absolute path
+          path: path.startsWith("/") ? path : join(cwd, path),
           lineNr,
           col,
           text,
@@ -129,7 +132,12 @@ export class Source extends BaseSource<Params> {
           return;
         }
 
-        const cmd = ["rg", ...args.sourceParams.args, input];
+        const cmd = [
+          "rg",
+          ...args.sourceParams.args,
+          input,
+          ...args.sourceParams.paths,
+        ];
         const cwd = args.sourceParams.path != ""
           ? args.sourceParams.path
           : await fn.getcwd(args.denops) as string;
@@ -210,6 +218,7 @@ export class Source extends BaseSource<Params> {
       args: ["--column", "--no-heading", "--color", "never"],
       input: "",
       path: "",
+      paths: [],
       highlights: {
         path: "Normal",
         lineNr: "Normal",
