@@ -16,6 +16,12 @@ https://github.com/Shougo/ddu.vim
 
 https://github.com/BurntSushi/ripgrep
 
+### kensaku.vim (Optional)
+
+Required if you want to use [Migemo][].
+
+https://github.com/lambdalisue/kensaku.vim
+
 ## Configuration
 
 ```
@@ -41,6 +47,22 @@ call ddu#custom#patch_global({
     \   },
     \ })
 ```
+
+if you want to use [Migemo][] as input pattern, should be set "migemo" to `inputType`.
+
+```
+e.g.
+
+call ddu#custom#patch_global({
+    \   'sourceParams' : {
+    \     'rg' : {
+    \       'inputType': 'migemo',
+    \     },
+    \   },
+    \ })
+```
+
+[Migemo]: http://0xcc.net/migemo/
 
 ## Author
 

@@ -28,6 +28,9 @@ https://github.com/vim-denops/denops.vim
 And install below binary.
 https://github.com/BurntSushi/ripgrep
 
+If you want to use Migemo, install below plugin.
+https://github.com/lambdalisue/kensaku.vim
+
 ==============================================================================
 COMMANDS					*ddu-source-rg-commands*
 
@@ -82,6 +85,17 @@ args	(string[])
 
 	if you want to highlight the search word, should be set "--json".
 	e.g. ["--json"]
+
+						*ddu-source-rg-param-inputType*
+inputType	(string)
+	Search input pattern type.
+
+	"regex"		Regular expressions
+
+	"migemo"	Migemo (http://0xcc.net/migemo/)
+
+	Default: "regex"
+
 						*ddu-source-rg-param-input*
 input	(string)
 	Search input string.
