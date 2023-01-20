@@ -17,8 +17,13 @@ type HighlightGroup = {
   word: string;
 };
 
+type InputType =
+  | "regex"
+  | "migemo";
+
 type Params = {
   args: string[];
+  inputType: InputType;
   input: string;
   path: string;
   paths: string[];
@@ -35,6 +40,10 @@ async function* iterLine(r: ReadableStream<Uint8Array>): AsyncIterable<string> {
       yield line as string;
     }
   }
+}
+
+function kensakuQuery(denops: Denops, text: string): Promise<string> {
+  return denops.dispatch("kensaku", "query", text) as Promise<string>;
 }
 
 export class Source extends BaseSource<Params> {
@@ -121,11 +130,21 @@ export class Source extends BaseSource<Params> {
       };
     };
 
+    const getInput = async (): Promise<string> => {
+      const input = args.options.volatile
+        ? args.input
+        : args.sourceParams.input;
+      switch (args.sourceParams.inputType) {
+        case "migemo":
+          return await kensakuQuery(args.denops, input);
+        default: // "regex"
+          return input;
+      }
+    };
+
     return new ReadableStream({
       async start(controller) {
-        const input = args.options.volatile
-          ? args.input
-          : args.sourceParams.input;
+        const input = await getInput();
 
         if (input == "") {
           controller.close();
@@ -135,6 +154,7 @@ export class Source extends BaseSource<Params> {
         const cmd = [
           "rg",
           ...args.sourceParams.args,
+          "--", 
           input,
           ...args.sourceParams.paths,
         ];
@@ -216,6 +236,7 @@ export class Source extends BaseSource<Params> {
   params(): Params {
     return {
       args: ["--column", "--no-heading", "--color", "never"],
+      inputType: "regex",
       input: "",
       path: "",
       paths: [],
