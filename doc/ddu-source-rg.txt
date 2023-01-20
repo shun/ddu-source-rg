@@ -109,6 +109,12 @@ path	(string)
 
 	Default: ""
 
+paths	(string[])
+	Search paths.
+	If it is empty, |path| is used instead.
+
+	Default: []
+
 highlights	(list)
 	Highlight groups for path, lineNr and search word.
 	Default: "Normal" for path and lineNr.
