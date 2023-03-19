@@ -73,6 +73,14 @@ EXAMPLES					*ddu-source-rg-examples*
     "    \     },
     "    \   }
     "    \ })
+
+    " Search for occurrences of a fixed pattern, then filter the results:
+    nnoremap <space>/
+      \ :call ddu#start(#{
+      \   volatile: v:false,
+      \   sources: [#{name: 'rg',}],
+      \   sourceParams: #{rg: #{input: input('Pattern: ')}}
+      \ })<CR>
 <
 ==============================================================================
 PARAMS						*ddu-source-rg-params*
