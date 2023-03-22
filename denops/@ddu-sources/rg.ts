@@ -121,8 +121,7 @@ export class Source extends BaseSource<Params> {
         word: text,
         display: line,
         action: {
-          // When paths given, path is absolute path
-          path: path.startsWith("/") ? path : join(cwd, path),
+          path,
           lineNr,
           col,
           text,
