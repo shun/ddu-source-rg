@@ -109,6 +109,7 @@ path	(string)
 
 	Default: ""
 
+						*ddu-source-rg-param-paths*
 paths	(string[])
 	Search paths.
 	If it is empty, |path| is used instead.
