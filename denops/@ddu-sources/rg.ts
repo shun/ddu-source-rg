@@ -2,12 +2,13 @@ import {
   BaseSource,
   DduOptions,
   Item,
-} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
+  SourceOptions,
+} from "https://deno.land/x/ddu_vim@v2.6.0/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.6.0/deps.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.2/file.ts";
-import { join } from "https://deno.land/std@0.171.0/path/mod.ts";
-import { abortable } from "https://deno.land/std@0.171.0/async/mod.ts";
-import { TextLineStream } from "https://deno.land/std@0.171.0/streams/mod.ts";
+import { join } from "https://deno.land/std@0.181.0/path/mod.ts";
+import { abortable } from "https://deno.land/std@0.181.0/async/mod.ts";
+import { TextLineStream } from "https://deno.land/std@0.181.0/streams/mod.ts";
 
 const enqueueSize1st = 1000;
 
@@ -25,7 +26,6 @@ type Params = {
   args: string[];
   inputType: InputType;
   input: string;
-  path: string;
   paths: string[];
   highlights: HighlightGroup;
 };
@@ -52,6 +52,7 @@ export class Source extends BaseSource<Params> {
   gather(args: {
     denops: Denops;
     options: DduOptions;
+    sourceOptions: SourceOptions;
     sourceParams: Params;
     input: string;
   }): ReadableStream<Item<ActionData>[]> {
@@ -154,19 +155,19 @@ export class Source extends BaseSource<Params> {
         const cmd = [
           "rg",
           ...args.sourceParams.args,
-          "--", 
+          "--",
           input,
           ...args.sourceParams.paths,
         ];
-        const cwd = args.sourceParams.path != ""
-          ? args.sourceParams.path
-          : await fn.getcwd(args.denops) as string;
 
         let items: Item<ActionData>[] = [];
         const enqueueSize2nd = 100000;
         let enqueueSize = enqueueSize1st;
         let numChunks = 0;
 
+        const cwd = args.sourceOptions.path != ""
+          ? args.sourceOptions.path
+          : await fn.getcwd(args.denops) as string;
         const proc = Deno.run({
           cmd,
           stdout: "piped",
@@ -238,7 +239,6 @@ export class Source extends BaseSource<Params> {
       args: ["--column", "--no-heading", "--color", "never"],
       inputType: "regex",
       input: "",
-      path: "",
       paths: [],
       highlights: {
         path: "Normal",
