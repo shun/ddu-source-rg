@@ -46,6 +46,10 @@ function kensakuQuery(denops: Denops, text: string): Promise<string> {
   return denops.dispatch("kensaku", "query", text) as Promise<string>;
 }
 
+function utf8Length(str: string): number {
+  return new TextEncoder().encode(str).length;
+}
+
 export class Source extends BaseSource<Params> {
   kind = "file";
 
@@ -72,7 +76,7 @@ export class Source extends BaseSource<Params> {
       const path = jo.data.path.text;
       const lineNr = jo.data.line_number;
       const col = jo.data.submatches[0].start;
-      const text = jo.data.lines.text?.replace("\n", "");
+      const text = jo.data.lines.text?.replace(/\r?\n/, "");
       const header = `${path}:${lineNr}:${col}: `;
       return {
         word: header + text,
@@ -88,18 +92,18 @@ export class Source extends BaseSource<Params> {
             name: "path",
             "hl_group": hlGroupPath,
             col: 1,
-            width: path.length,
+            width: utf8Length(path),
           },
           {
             name: "lineNr",
             "hl_group": hlGroupLineNr,
-            col: path.length + 2,
-            width: String(lineNr).length,
+            col: utf8Length(path) + 2,
+            width: utf8Length(String(lineNr)),
           },
           {
             name: "word",
             "hl_group": hlGroupWord,
-            col: header.length + col + 1,
+            col: utf8Length(header) + col + 1,
             width: jo.data.submatches[0].end - col,
           },
         ],
