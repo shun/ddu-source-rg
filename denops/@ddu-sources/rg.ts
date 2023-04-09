@@ -76,7 +76,7 @@ export class Source extends BaseSource<Params> {
       const path = jo.data.path.text;
       const lineNr = jo.data.line_number;
       const col = jo.data.submatches[0].start;
-      const text = jo.data.lines.text?.replace("\n", "");
+      const text = jo.data.lines.text?.replace(/\r?\n/, "");
       const header = `${path}:${lineNr}:${col}: `;
       return {
         word: header + text,
