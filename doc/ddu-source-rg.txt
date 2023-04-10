@@ -45,6 +45,14 @@ EXAMPLES					*ddu-source-rg-examples*
     " 'word' specify what you want search word.
     call ddu#start({'sources': [{'name': 'rg', 'params': {'input': word}}]})
 
+    " Change base path.
+    call ddu#start({
+	  \   'sources': [{
+	  \     'name': 'rg',
+	  \     'options': {'path': expand('~')},
+	  \   }],
+	  \ })
+
     " live grep
     " You need to make "volatile" option v:true.
     " Note: the matchers should be empty for performance
@@ -102,17 +110,10 @@ input	(string)
 	Note: If |ddu-option-volatile| is true, |ddu-option-input| is used
 	instead.
 
-						*ddu-source-rg-param-path*
-path	(string)
-	Search directory.
-	If it is empty, |getcwd()| is used instead.
-
-	Default: ""
-
 						*ddu-source-rg-param-paths*
 paths	(string[])
 	Search paths.
-	If it is empty, |path| is used instead.
+	If it is empty, |ddu-source-option-path| is used instead.
 
 	Default: []
 
