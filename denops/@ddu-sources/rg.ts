@@ -3,12 +3,12 @@ import {
   DduOptions,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.6.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.6.0/deps.ts";
+} from "https://deno.land/x/ddu_vim@v2.7.1/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.7.1/deps.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.2/file.ts";
-import { join } from "https://deno.land/std@0.181.0/path/mod.ts";
-import { abortable } from "https://deno.land/std@0.181.0/async/mod.ts";
-import { TextLineStream } from "https://deno.land/std@0.181.0/streams/mod.ts";
+import { join } from "https://deno.land/std@0.183.0/path/mod.ts";
+import { abortable } from "https://deno.land/std@0.183.0/async/mod.ts";
+import { TextLineStream } from "https://deno.land/std@0.183.0/streams/mod.ts";
 
 const enqueueSize1st = 1000;
 
@@ -136,7 +136,7 @@ export class Source extends BaseSource<Params> {
     };
 
     const getInput = async (): Promise<string> => {
-      const input = args.options.volatile
+      const input = args.sourceOptions.volatile
         ? args.input
         : args.sourceParams.input;
       switch (args.sourceParams.inputType) {
@@ -222,7 +222,7 @@ export class Source extends BaseSource<Params> {
           if (!status.success) {
             const mes = new TextDecoder().decode(stderr);
             if (
-              mes.length > 0 && (!args.options.volatile ||
+              mes.length > 0 && (!args.sourceOptions.volatile ||
                 !mes.match(/regex parse error/))
             ) {
               console.error(mes);
