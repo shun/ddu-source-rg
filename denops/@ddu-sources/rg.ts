@@ -90,19 +90,19 @@ export class Source extends BaseSource<Params> {
         highlights: [
           {
             name: "path",
-            "hl_group": hlGroupPath,
+            hl_group: hlGroupPath,
             col: 1,
             width: utf8Length(path),
           },
           {
             name: "lineNr",
-            "hl_group": hlGroupLineNr,
+            hl_group: hlGroupLineNr,
             col: utf8Length(path) + 2,
             width: utf8Length(String(lineNr)),
           },
           {
             name: "word",
-            "hl_group": hlGroupWord,
+            hl_group: hlGroupWord,
             col: utf8Length(header) + col + 1,
             width: jo.data.submatches[0].end - col,
           },
@@ -172,18 +172,21 @@ export class Source extends BaseSource<Params> {
         const cwd = args.sourceOptions.path != ""
           ? args.sourceOptions.path
           : await fn.getcwd(args.denops) as string;
-        const proc = Deno.run({
-          cmd,
-          stdout: "piped",
-          stderr: "piped",
-          stdin: "null",
-          cwd,
-        });
+        const proc = new Deno.Command(
+          cmd[0],
+          {
+            args: cmd.slice(1),
+            stdout: "piped",
+            stderr: "piped",
+            stdin: "null",
+            cwd,
+          },
+        ).spawn();
 
         try {
           for await (
             const line of abortable(
-              iterLine(proc.stdout.readable),
+              iterLine(proc.stdout),
               abortController.signal,
             )
           ) {
@@ -214,18 +217,15 @@ export class Source extends BaseSource<Params> {
             console.error(e);
           }
         } finally {
-          const [status, stderr] = await Promise.all([
-            proc.status(),
-            proc.stderrOutput(),
-          ]);
-          proc.close();
+          const status = await proc.status;
           if (!status.success) {
-            const mes = new TextDecoder().decode(stderr);
-            if (
-              mes.length > 0 && (!args.sourceOptions.volatile ||
-                !mes.match(/regex parse error/))
+            for await (
+              const mes of abortable(
+                iterLine(proc.stderr),
+                abortController.signal,
+              )
             ) {
-              console.error(mes);
+                console.error(mes);
             }
           }
           controller.close();
