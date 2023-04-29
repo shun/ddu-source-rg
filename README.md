@@ -18,7 +18,7 @@ https://github.com/BurntSushi/ripgrep
 
 ### kensaku.vim (Optional)
 
-Required if you want to use [Migemo][].
+Required if you want to use [Migemo][Migemo].
 
 https://github.com/lambdalisue/kensaku.vim
 
@@ -48,7 +48,8 @@ call ddu#custom#patch_global({
     \ })
 ```
 
-if you want to use [Migemo][] as input pattern, should be set "migemo" to `inputType`.
+if you want to use [Migemo][Migemo] as input pattern, should be set "migemo" to
+`inputType`.
 
 ```
 e.g.
