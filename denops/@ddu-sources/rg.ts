@@ -24,6 +24,7 @@ type InputType =
 
 type Params = {
   args: string[];
+  displayText: boolean;
   inputType: InputType;
   input: string;
   paths: string[];
@@ -65,6 +66,7 @@ export class Source extends BaseSource<Params> {
     const hlGroupPath = args.sourceParams.highlights?.path ?? "";
     const hlGroupLineNr = args.sourceParams.highlights?.lineNr ?? "";
     const hlGroupWord = args.sourceParams.highlights?.word ?? "";
+    const displayText = args.sourceParams.displayText;
 
     const parseJson = (line: string, cwd: string) => {
       line = line.trim();
@@ -121,10 +123,13 @@ export class Source extends BaseSource<Params> {
       const lineNr = result ? Number(getParam(result, 2)) : 0;
       const col = result ? Number(getParam(result, 3)) : 0;
       const text = result ? getParam(result, 4) : "";
+      const display = result
+        ? displayText ? result.join(":") : result.slice(1, 3).join(":")
+        : "";
 
       return {
         word: text,
-        display: line,
+        display,
         action: {
           // When paths given, path is absolute path
           path: path.startsWith("/") ? path : join(cwd, path),
@@ -225,7 +230,7 @@ export class Source extends BaseSource<Params> {
                 abortController.signal,
               )
             ) {
-                console.error(mes);
+              console.error(mes);
             }
           }
           controller.close();
@@ -241,6 +246,7 @@ export class Source extends BaseSource<Params> {
   params(): Params {
     return {
       args: ["--column", "--no-heading", "--color", "never"],
+      displayText: true,
       inputType: "regex",
       input: "",
       paths: [],
