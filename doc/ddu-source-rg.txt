@@ -15,7 +15,7 @@ Params          |ddu-source-rg-params|
 ==============================================================================
 INTRODUCTION					*ddu-source-rg-introduction*
 
-This source collects ripgrep result.
+This source collects "ripgrep" result.
 
 ==============================================================================
 INSTALL						*ddu-source-rg-install*
@@ -36,7 +36,7 @@ COMMANDS					*ddu-source-rg-commands*
 
 						*:DduRg*
 :DduRg
-	Search text by ripgrep.
+	Search text by "ripgrep".
 
 ==============================================================================
 EXAMPLES					*ddu-source-rg-examples*
@@ -47,11 +47,11 @@ EXAMPLES					*ddu-source-rg-examples*
 
     " Change base path.
     call ddu#start({
-	  \   'sources': [{
-	  \     'name': 'rg',
-	  \     'options': {'path': expand('~')},
-	  \   }],
-	  \ })
+        \   'sources': [{
+        \     'name': 'rg',
+        \     'options': {'path': expand('~')},
+        \   }],
+        \ })
 
     " live grep
     " You need to make "volatile" option v:true.
@@ -96,7 +96,13 @@ args	(string[])
 	if you want to highlight the search word, should be set "--json".
 	e.g. ["--json"]
 
-						*ddu-source-rg-param-inputType*
+					*ddu-source-rg-param-displayText*
+displayText	(boolean)
+	Display matched text.
+
+	Default: true
+
+					*ddu-source-rg-param-inputType*
 inputType	(string)
 	Search input pattern type.
 
@@ -109,8 +115,8 @@ inputType	(string)
 						*ddu-source-rg-param-input*
 input	(string)
 	Search input string.
-	Note: If |ddu-option-volatile| is true, |ddu-option-input| is used
-	instead.
+	Note: If |ddu-source-option-volatile| is true, |ddu-option-input| is
+	used instead.
 
 						*ddu-source-rg-param-paths*
 paths	(string[])
@@ -121,6 +127,7 @@ paths	(string[])
 
 highlights	(list)
 	Highlight groups for path, lineNr and search word.
+
 	Default: "Normal" for path and lineNr.
 	Default: "Search" for word
 
