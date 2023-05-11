@@ -124,7 +124,7 @@ export class Source extends BaseSource<Params> {
       const col = result ? Number(getParam(result, 3)) : 0;
       const text = result ? getParam(result, 4) : "";
       const display = result
-        ? displayText ? result.join(":") : result.slice(1, 3).join(":")
+        ? displayText ? line : result.slice(1, 3).join(":")
         : "";
 
       return {
