@@ -6,7 +6,7 @@ import {
 } from "https://deno.land/x/ddu_vim@v2.8.4/types.ts";
 import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.8.4/deps.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.4.0/file.ts";
-import { join } from "https://deno.land/std@0.186.0/path/mod.ts";
+import { resolve } from "https://deno.land/std@0.186.0/path/mod.ts";
 import { abortable } from "https://deno.land/std@0.186.0/async/mod.ts";
 import { TextLineStream } from "https://deno.land/std@0.186.0/streams/mod.ts";
 
@@ -84,7 +84,7 @@ export class Source extends BaseSource<Params> {
         word: header + text,
         action: {
           // When paths given, path is absolute path
-          path: path.startsWith("/") ? path : join(cwd, path),
+          path: path ? resolve(cwd, path) : "",
           lineNr,
           col: col + 1,
           text,
@@ -132,7 +132,7 @@ export class Source extends BaseSource<Params> {
         display,
         action: {
           // When paths given, path is absolute path
-          path: path.startsWith("/") ? path : join(cwd, path),
+          path: path ? resolve(cwd, path) : "",
           lineNr,
           col,
           text,
