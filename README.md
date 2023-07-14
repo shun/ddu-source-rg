@@ -24,11 +24,11 @@ https://github.com/lambdalisue/kensaku.vim
 
 ## Configuration
 
-```
-call ddu#custom#patch_global({
-    \   'sourceParams' : {
-    \     'rg' : {
-    \       'args': ['--column', '--no-heading', '--color', 'never'],
+```vim
+call ddu#custom#patch_global(#{
+    \   sourceParams : #{
+    \     rg : #{
+    \       args: ['--column', '--no-heading', '--color', 'never'],
     \     },
     \   },
     \ })
@@ -36,13 +36,13 @@ call ddu#custom#patch_global({
 
 if you want to highlight the search word, should be set "--json".
 
-```
 e.g.
 
-call ddu#custom#patch_global({
-    \   'sourceParams' : {
-    \     'rg' : {
-    \       'args': ['--json'],
+```vim
+call ddu#custom#patch_global(#{
+    \   sourceParams: #{
+    \     rg: #{
+    \       args: ['--json'],
     \     },
     \   },
     \ })
@@ -51,13 +51,13 @@ call ddu#custom#patch_global({
 if you want to use [Migemo][Migemo] as input pattern, should be set "migemo" to
 `inputType`.
 
-```
 e.g.
 
-call ddu#custom#patch_global({
-    \   'sourceParams' : {
-    \     'rg' : {
-    \       'inputType': 'migemo',
+```vim
+call ddu#custom#patch_global(#{
+    \   sourceParams: #{
+    \     rg: #{
+    \       inputType: 'migemo',
     \     },
     \   },
     \ })

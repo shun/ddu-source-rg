@@ -3,12 +3,12 @@ import {
   DduOptions,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.8.4/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.8.4/deps.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.4.0/file.ts";
-import { resolve } from "https://deno.land/std@0.186.0/path/mod.ts";
-import { abortable } from "https://deno.land/std@0.186.0/async/mod.ts";
-import { TextLineStream } from "https://deno.land/std@0.186.0/streams/mod.ts";
+} from "https://deno.land/x/ddu_vim@v3.4.2/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.4.2/deps.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.3/file.ts";
+import { resolve } from "https://deno.land/std@0.194.0/path/mod.ts";
+import { abortable } from "https://deno.land/std@0.194.0/async/mod.ts";
+import { TextLineStream } from "https://deno.land/std@0.194.0/streams/mod.ts";
 
 const enqueueSize1st = 1000;
 

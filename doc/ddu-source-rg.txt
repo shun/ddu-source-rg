@@ -43,13 +43,13 @@ EXAMPLES					*ddu-source-rg-examples*
 
 >
     " 'word' specify what you want search word.
-    call ddu#start({'sources': [{'name': 'rg', 'params': {'input': word}}]})
+    call ddu#start(#{ sources: [#{ name: 'rg', params: #{ input: word } }] })
 
     " Change base path.
-    call ddu#start({
-        \   'sources': [{
-        \     'name': 'rg',
-        \     'options': {'path': expand('~')},
+    call ddu#start(#{
+        \   sources: [#{
+        \     name: 'rg',
+        \     options: {'path': expand('~')},
         \   }],
         \ })
 
@@ -58,38 +58,46 @@ EXAMPLES					*ddu-source-rg-examples*
     " Note: the matchers should be empty for performance
     command! DduRgLive call <SID>ddu_rg_live()
     function! s:ddu_rg_live() abort
-      call ddu#start({
-            \   'sources': [{
-            \     'name': 'rg',
-            \     'options': {
-            \       'matchers': [],
-            \       'volatile': v:true,
+      call ddu#start(#{
+            \   sources: [{
+            \     name: 'rg',
+            \     options: #{
+            \       matchers: [],
+            \       volatile: v:true,
             \     },
             \   }],
-            \   'uiParams': {'ff': {
-            \     'ignoreEmpty': v:false,
-            \     'autoResize': v:false,
-            \   }},
+            \   uiParams: #{
+            \     ff: #{
+            \       ignoreEmpty: v:false,
+            \       autoResize: v:false,
+            \     }
+            \   },
             \ })
     endfunction
 
     " If you want to narrow by filename, please install
     " "ddu-filter-converter_display_word".
     " https://github.com/Shougo/ddu-filter-converter_display_word
-    "call ddu#custom#patch_global({
-    "    \   'sourceOptions': {
-    "    \     'rg': {
-    "    \       'matchers': ['converter_display_word', 'matcher_substring'],
+    "call ddu#custom#patch_global(#{
+    "    \   sourceOptions: #{
+    "    \     rg: #{
+    "    \       matchers: ['converter_display_word', 'matcher_substring'],
     "    \     },
     "    \   }
     "    \ })
 
     " Search for occurrences of a fixed pattern, then filter the results:
     nnoremap <space>/
-      \ :call ddu#start(#{
+      \ <Cmd>call ddu#start(#{
       \   volatile: v:false,
-      \   sources: [#{name: 'rg',}],
-      \   sourceParams: #{rg: #{input: input('Pattern: ')}}
+      \   sources: [#{
+      \     name: 'rg',
+      \   }],
+      \   sourceParams: #{
+      \     rg: #{
+      \       input: input('Pattern: '),
+      \     },
+      \   },
       \ })<CR>
 <
 ==============================================================================
