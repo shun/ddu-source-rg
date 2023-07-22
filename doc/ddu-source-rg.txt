@@ -59,7 +59,7 @@ EXAMPLES					*ddu-source-rg-examples*
     command! DduRgLive call <SID>ddu_rg_live()
     function! s:ddu_rg_live() abort
       call ddu#start(#{
-            \   sources: [{
+            \   sources: [#{
             \     name: 'rg',
             \     options: #{
             \       matchers: [],
