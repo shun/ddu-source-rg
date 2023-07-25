@@ -233,8 +233,6 @@ export class Source extends BaseSource<Params> {
             console.error(mes);
           }
 
-          proc.kill();
-
           controller.close();
         }
       },
