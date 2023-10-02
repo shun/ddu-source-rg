@@ -24,6 +24,7 @@ type InputType =
   | "migemo";
 
 type Params = {
+  cmd: string;
   args: string[];
   displayText: boolean;
   inputType: InputType;
@@ -163,7 +164,7 @@ export class Source extends BaseSource<Params> {
         }
 
         const cmd = [
-          "rg",
+          args.sourceParams.cmd ?? "rg",
           ...args.sourceParams.args,
           "--",
           input,
