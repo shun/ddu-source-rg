@@ -87,6 +87,12 @@ EXAMPLES					*ddu-source-rg-examples*
 ==============================================================================
 PARAMS						*ddu-source-rg-params*
 
+						*ddu-source-rg-param-cmd*
+cmd	(string)
+	Command to execute rg.
+
+	Default: "rg"
+
 						*ddu-source-rg-param-args*
 args	(string[])
 	Execute rg with args.
