@@ -164,7 +164,7 @@ export class Source extends BaseSource<Params> {
         }
 
         const cmd = [
-          args.sourceParams.cmd ?? "rg",
+          await fn.exepath(args.denops, args.sourceParams.cmd || "rg"),
           ...args.sourceParams.args,
           "--",
           input,
