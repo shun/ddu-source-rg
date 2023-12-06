@@ -24,13 +24,13 @@ type InputType =
   | "migemo";
 
 type Params = {
-  cmd: string;
   args: string[];
+  cmd: string;
   displayText: boolean;
-  inputType: InputType;
-  input: string;
-  paths: string[];
   highlights: HighlightGroup;
+  input: string;
+  inputType: InputType;
+  paths: string[];
 };
 
 async function* iterLine(r: ReadableStream<Uint8Array>): AsyncIterable<string> {
@@ -164,7 +164,7 @@ export class Source extends BaseSource<Params> {
         }
 
         const cmd = [
-          await fn.exepath(args.denops, args.sourceParams.cmd || "rg"),
+          await fn.exepath(args.denops, args.sourceParams.cmd),
           ...args.sourceParams.args,
           "--",
           input,
@@ -204,7 +204,10 @@ export class Source extends BaseSource<Params> {
                 items.push(ret);
               }
             } else {
-              items.push(parseLine(line, cwd));
+              const ret = parseLine(line, cwd);
+              if (ret.word.length !== 0) {
+                items.push(ret);
+              }
             }
             if (items.length >= enqueueSize) {
               numChunks++;
@@ -247,6 +250,7 @@ export class Source extends BaseSource<Params> {
   params(): Params {
     return {
       args: ["--column", "--no-heading", "--color", "never"],
+      cmd: "rg",
       displayText: true,
       inputType: "regex",
       input: "",
