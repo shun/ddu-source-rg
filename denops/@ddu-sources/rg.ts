@@ -1,15 +1,18 @@
 import {
   BaseSource,
-  DduOptions,
-  Item,
-  SourceOptions,
-} from "https://deno.land/x/ddu_vim@v4.0.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v4.0.0/deps.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.7.1/file.ts";
+  type DduOptions,
+  type Item,
+  type SourceOptions,
+} from "jsr:@shougo/ddu-vim@^5.0.0/types";
+import { treePath2Filename } from "jsr:@shougo/ddu-vim@^5.0.0/utils";
+import { type ActionData } from "jsr:@shougo/ddu-kind-file@^0.8.0";
+
+import type { Denops } from "jsr:@denops/core@^7.0.0";
+import * as fn from "jsr:@denops/std@7.0.1/function";
+
 import { resolve } from "jsr:@std/path@0.224.0";
 import { abortable } from "jsr:@std/async@0.224.0";
 import { TextLineStream } from "jsr:@std/streams@0.224.0";
-import { treePath2Filename } from "https://deno.land/x/ddu_vim@v4.0.0/utils.ts";
 
 const enqueueSize1st = 1000;
 
