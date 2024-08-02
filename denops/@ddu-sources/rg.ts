@@ -10,9 +10,9 @@ import { type ActionData } from "jsr:@shougo/ddu-kind-file@^0.8.0";
 import type { Denops } from "jsr:@denops/core@^7.0.0";
 import * as fn from "jsr:@denops/std@7.0.1/function";
 
-import { resolve } from "jsr:@std/path@0.224.0";
-import { abortable } from "jsr:@std/async@0.224.0";
-import { TextLineStream } from "jsr:@std/streams@0.224.0";
+import { resolve } from "jsr:@std/path@1.0.2";
+import { abortable } from "jsr:@std/async@1.0.1";
+import { TextLineStream } from "jsr:@std/streams@1.0.0";
 
 const enqueueSize1st = 1000;
 
