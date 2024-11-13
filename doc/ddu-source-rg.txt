@@ -140,6 +140,19 @@ input	(string)
 	Note: If |ddu-source-option-volatile| is true, |ddu-option-input| is
 	used instead.
 
+					*ddu-source-rg-param-maxEnqueSize*
+maxEnqueSize	(number)
+	Maximum number of enqued items.
+	If the length of items exceeds it, the processing will be terminated.
+
+	Default: 10000
+
+				*ddu-source-rg-param-minVolatileInputLength*
+minVolatileInputLength	(number)
+	Minimal input length when |ddu-source-option-volatile| is true.
+
+	Default: 2
+
 						*ddu-source-rg-param-paths*
 paths	(string[])
 	Search paths.

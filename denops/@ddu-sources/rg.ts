@@ -2,19 +2,20 @@ import {
   type DduOptions,
   type Item,
   type SourceOptions,
-} from "jsr:@shougo/ddu-vim@~6.1.0/types";
-import { BaseSource } from "jsr:@shougo/ddu-vim@~6.1.0/source";
-import { treePath2Filename } from "jsr:@shougo/ddu-vim@~6.1.0/utils";
+} from "jsr:@shougo/ddu-vim@~6.4.0/types";
+import { BaseSource } from "jsr:@shougo/ddu-vim@~6.4.0/source";
+import { treePath2Filename } from "jsr:@shougo/ddu-vim@~6.4.0/utils";
 import { type ActionData } from "jsr:@shougo/ddu-kind-file@~0.9.0";
 
 import type { Denops } from "jsr:@denops/core@~7.0.0";
-import * as fn from "jsr:@denops/std@~7.1.1/function";
+import * as fn from "jsr:@denops/std@~7.3.0/function";
 
 import { resolve } from "jsr:@std/path@~1.0.3/resolve";
 import { abortable } from "jsr:@std/async@~1.0.4/abortable";
 import { TextLineStream } from "jsr:@std/streams@~1.0.3/text-line-stream";
 
 const enqueueSize1st = 1000;
+const enqueueSize2nd = 100000;
 
 type HighlightGroup = {
   path: string;
@@ -32,6 +33,8 @@ type Params = {
   displayText: boolean;
   highlights: HighlightGroup;
   input: string;
+  maxEnqueSize: number;
+  minVolatileInputLength: number;
   inputType: InputType;
   paths: string[];
 };
@@ -57,7 +60,7 @@ function utf8Length(str: string): number {
 }
 
 export class Source extends BaseSource<Params> {
-  kind = "file";
+  override kind = "file";
 
   gather(args: {
     denops: Denops;
@@ -161,7 +164,11 @@ export class Source extends BaseSource<Params> {
       async start(controller) {
         const input = await getInput();
 
-        if (input == "") {
+        if (
+          input == "" ||
+          args.sourceOptions.volatile &&
+            input.length < args.sourceParams.minVolatileInputLength
+        ) {
           controller.close();
           return;
         }
@@ -175,7 +182,6 @@ export class Source extends BaseSource<Params> {
         ];
 
         let items: Item<ActionData>[] = [];
-        const enqueueSize2nd = 100000;
         let enqueueSize = enqueueSize1st;
         let numChunks = 0;
 
@@ -194,6 +200,7 @@ export class Source extends BaseSource<Params> {
           },
         ).spawn();
 
+        let totalSize = 0;
         try {
           for await (
             const line of abortable(
@@ -205,13 +212,21 @@ export class Source extends BaseSource<Params> {
               const ret = parseJson(line, cwd);
               if (ret) {
                 items.push(ret);
+                totalSize += 1;
               }
             } else {
               const ret = parseLine(line, cwd);
               if (ret.word.length !== 0) {
                 items.push(ret);
+                totalSize += 1;
               }
             }
+
+            if (totalSize >= args.sourceParams.maxEnqueSize) {
+              controller.enqueue(items);
+              return;
+            }
+
             if (items.length >= enqueueSize) {
               numChunks++;
               if (numChunks > 1) {
@@ -221,6 +236,7 @@ export class Source extends BaseSource<Params> {
               items = [];
             }
           }
+
           if (items.length) {
             controller.enqueue(items);
           }
@@ -257,6 +273,8 @@ export class Source extends BaseSource<Params> {
       displayText: true,
       inputType: "regex",
       input: "",
+      maxEnqueSize: 10000,
+      minVolatileInputLength: 2,
       paths: [],
       highlights: {
         path: "Normal",
