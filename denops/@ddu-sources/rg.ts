@@ -224,6 +224,9 @@ export class Source extends BaseSource<Params> {
 
             if (totalSize >= args.sourceParams.maxEnqueSize) {
               controller.enqueue(items);
+              // Need to kill the process before return because don't exit
+              // stderr iteration until process exit.
+              proc.kill("SIGTERM");
               return;
             }
 
