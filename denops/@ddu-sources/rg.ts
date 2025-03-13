@@ -2,13 +2,13 @@ import {
   type DduOptions,
   type Item,
   type SourceOptions,
-} from "jsr:@shougo/ddu-vim@~6.4.0/types";
-import { BaseSource } from "jsr:@shougo/ddu-vim@~6.4.0/source";
-import { treePath2Filename } from "jsr:@shougo/ddu-vim@~6.4.0/utils";
+} from "jsr:@shougo/ddu-vim@~10.1.0/types";
+import { BaseSource } from "jsr:@shougo/ddu-vim@~10.1.0/source";
+import { treePath2Filename } from "jsr:@shougo/ddu-vim@~10.1.0/utils";
 import { type ActionData } from "jsr:@shougo/ddu-kind-file@~0.9.0";
 
 import type { Denops } from "jsr:@denops/core@~7.0.0";
-import * as fn from "jsr:@denops/std@~7.3.0/function";
+import * as fn from "jsr:@denops/std@~7.5.0/function";
 
 import { resolve } from "jsr:@std/path@~1.0.3/resolve";
 import { abortable } from "jsr:@std/async@~1.0.4/abortable";
@@ -244,8 +244,10 @@ export class Source extends BaseSource<Params> {
             controller.enqueue(items);
           }
         } catch (e: unknown) {
-          if (e instanceof DOMException) {
-            proc.kill("SIGTERM");
+          proc.kill("SIGTERM");
+
+          if (e instanceof Error && e.name.includes("AbortReason")) {
+            // Ignore AbortReason errors
           } else {
             console.error(e);
           }
