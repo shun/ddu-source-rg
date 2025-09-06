@@ -1,18 +1,14 @@
-import {
-  type DduOptions,
-  type Item,
-  type SourceOptions,
-} from "jsr:@shougo/ddu-vim@~10.1.0/types";
-import { BaseSource } from "jsr:@shougo/ddu-vim@~10.1.0/source";
-import { treePath2Filename } from "jsr:@shougo/ddu-vim@~10.1.0/utils";
-import { type ActionData } from "jsr:@shougo/ddu-kind-file@~0.9.0";
+import type { DduOptions, Item, SourceOptions } from "@shougo/ddu-vim/types";
+import { BaseSource } from "@shougo/ddu-vim/source";
+import { treePath2Filename } from "@shougo/ddu-vim/utils";
+import type { ActionData } from "@shougo/ddu-kind-file";
 
-import type { Denops } from "jsr:@denops/core@~7.0.0";
-import * as fn from "jsr:@denops/std@~7.5.0/function";
+import type { Denops } from "@denops/std";
+import * as fn from "@denops/std/function";
 
-import { resolve } from "jsr:@std/path@~1.0.3/resolve";
-import { abortable } from "jsr:@std/async@~1.0.4/abortable";
-import { TextLineStream } from "jsr:@std/streams@~1.0.3/text-line-stream";
+import { resolve } from "@std/path/resolve";
+import { abortable } from "@std/async/abortable";
+import { TextLineStream } from "@std/streams/text-line-stream";
 
 const enqueueSize1st = 1000;
 const enqueueSize2nd = 100000;
