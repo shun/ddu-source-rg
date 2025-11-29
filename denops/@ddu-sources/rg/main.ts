@@ -27,6 +27,7 @@ type Params = {
   args: string[];
   cmd: string;
   displayText: boolean;
+  globs: string[];
   highlights: HighlightGroup;
   input: string;
   maxEnqueSize: number;
@@ -172,6 +173,8 @@ export class Source extends BaseSource<Params> {
         const cmd = [
           await fn.exepath(args.denops, args.sourceParams.cmd),
           ...args.sourceParams.args,
+          // Inline expansion of globs into ["--glob", g, "--glob", g2, ...]
+          ...((args.sourceParams.globs ?? []).flatMap((g) => ["--glob", g])),
           "--",
           input,
           ...args.sourceParams.paths,
@@ -272,6 +275,7 @@ export class Source extends BaseSource<Params> {
       args: ["--column", "--no-heading", "--color", "never"],
       cmd: "rg",
       displayText: true,
+      globs: [],
       inputType: "regex",
       input: "",
       maxEnqueSize: 10000,
