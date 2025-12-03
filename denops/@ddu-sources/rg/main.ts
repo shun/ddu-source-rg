@@ -7,6 +7,7 @@ import type { Denops } from "@denops/std";
 import * as fn from "@denops/std/function";
 
 import { resolve } from "@std/path/resolve";
+import { relative } from "@std/path/relative";
 import { abortable } from "@std/async/abortable";
 import { TextLineStream } from "@std/streams/text-line-stream";
 
@@ -25,8 +26,8 @@ type InputType =
 
 type Params = {
   args: string[];
+  category: boolean;
   cmd: string;
-  displayText: boolean;
   globs: string[];
   highlights: HighlightGroup;
   input: string;
@@ -71,7 +72,6 @@ export class Source extends BaseSource<Params> {
     const hlGroupPath = args.sourceParams.highlights?.path ?? "";
     const hlGroupLineNr = args.sourceParams.highlights?.lineNr ?? "";
     const hlGroupWord = args.sourceParams.highlights?.word ?? "";
-    const displayText = args.sourceParams.displayText;
 
     const parseJson = (line: string, cwd: string) => {
       line = line.trim();
@@ -117,7 +117,7 @@ export class Source extends BaseSource<Params> {
       };
     };
     const re = /^([^:]+):(\d+):(\d+):(.*)$/;
-    const parseLine = (line: string, cwd: string) => {
+    const parseLine = (line: string, cwd: string, input: string) => {
       line = line.trim();
       const result = line.match(re);
       const getParam = (ary: string[], index: number) => {
@@ -128,13 +128,13 @@ export class Source extends BaseSource<Params> {
       const lineNr = result ? Number(getParam(result, 2)) : 0;
       const col = result ? Number(getParam(result, 3)) : 0;
       const text = result ? getParam(result, 4) : "";
-      const display = result
-        ? displayText ? line : result.slice(1, 3).join(":")
-        : "";
+      const header = `${path}:${lineNr}:${col}: `;
+
+      const textStart = utf8Length(path) + 2 + utf8Length(String(lineNr)) +
+        utf8Length(String(col)) + 2;
 
       return {
-        word: text,
-        display,
+        word: header + text,
         action: {
           // When paths given, path is absolute path
           path: path ? resolve(cwd, path) : "",
@@ -142,6 +142,26 @@ export class Source extends BaseSource<Params> {
           col,
           text,
         },
+        highlights: [
+          {
+            name: "path",
+            hl_group: hlGroupPath,
+            col: 1,
+            width: utf8Length(path),
+          },
+          {
+            name: "lineNr",
+            hl_group: hlGroupLineNr,
+            col: utf8Length(path) + 2,
+            width: utf8Length(String(lineNr)),
+          },
+          {
+            name: "word",
+            hl_group: hlGroupWord,
+            col: textStart + col,
+            width: utf8Length(input),
+          },
+        ],
       };
     };
 
@@ -181,6 +201,7 @@ export class Source extends BaseSource<Params> {
         ];
 
         let items: Item<ActionData>[] = [];
+        const categories = new Set<string>();
         let enqueueSize = enqueueSize1st;
         let numChunks = 0;
 
@@ -200,6 +221,47 @@ export class Source extends BaseSource<Params> {
         ).spawn();
 
         let totalSize = 0;
+
+        const pushItem = (item: Item<ActionData>) => {
+          if (args.sourceParams.category) {
+            if (item?.action?.path && !categories.has(item.action.path)) {
+              // Add category
+              const path = item.action.path;
+              items.push({
+                word: `${path}:`,
+                display: `${relative(cwd, path)}:`,
+                action: {
+                  path,
+                },
+                highlights: [
+                  {
+                    name: "path",
+                    hl_group: hlGroupPath,
+                    col: 1,
+                    width: utf8Length(path),
+                  },
+                ],
+              });
+
+              categories.add(path);
+            }
+
+            // Remove item path
+            item.display = item.word.replace(/^([^:]+):(\d+):(\d+):/, "");
+            item.highlights = [
+              {
+                name: "word",
+                hl_group: hlGroupWord,
+                col: item?.action?.col ? item?.action?.col + 1 : 1,
+                width: utf8Length(input),
+              },
+            ];
+          }
+
+          items.push(item);
+          totalSize += 1;
+        };
+
         try {
           for await (
             const line of abortable(
@@ -209,15 +271,13 @@ export class Source extends BaseSource<Params> {
           ) {
             if (args.sourceParams.args.includes("--json")) {
               const ret = parseJson(line, cwd);
-              if (ret) {
-                items.push(ret);
-                totalSize += 1;
+              if (ret && ret.word.length > 0) {
+                pushItem(ret);
               }
             } else {
-              const ret = parseLine(line, cwd);
-              if (ret.word.length !== 0) {
-                items.push(ret);
-                totalSize += 1;
+              const ret = parseLine(line, cwd, input);
+              if (ret && ret.word.length > 0) {
+                pushItem(ret);
               }
             }
 
@@ -273,8 +333,8 @@ export class Source extends BaseSource<Params> {
   params(): Params {
     return {
       args: ["--column", "--no-heading", "--color", "never"],
+      category: false,
       cmd: "rg",
-      displayText: true,
       globs: [],
       inputType: "regex",
       input: "",
