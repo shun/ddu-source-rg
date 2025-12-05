@@ -227,9 +227,10 @@ export class Source extends BaseSource<Params> {
             if (item?.action?.path && !categories.has(item.action.path)) {
               // Add category
               const path = item.action.path;
+              const relativePath = relative(cwd, path);
               items.push({
                 word: `${path}:`,
-                display: `${relative(cwd, path)}:`,
+                display: `${relativePath}:`,
                 action: {
                   path,
                 },
@@ -238,7 +239,7 @@ export class Source extends BaseSource<Params> {
                     name: "path",
                     hl_group: hlGroupPath,
                     col: 1,
-                    width: utf8Length(path),
+                    width: utf8Length(relativePath),
                   },
                 ],
               });
@@ -247,12 +248,12 @@ export class Source extends BaseSource<Params> {
             }
 
             // Remove item path
-            item.display = item.word.replace(/^([^:]+):(\d+):(\d+):/, "");
+            item.display = item.word.replace(/^([^:]+):(\d+):(\d+):/, " ");
             item.highlights = [
               {
                 name: "word",
                 hl_group: hlGroupWord,
-                col: item?.action?.col ? item?.action?.col + 1 : 1,
+                col: (item?.action?.col ?? 1) + 2,
                 width: utf8Length(input),
               },
             ];
