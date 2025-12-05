@@ -112,17 +112,17 @@ args	(string[])
 	if you want to highlight the search word, should be set "--json".
 	e.g. ["--json"]
 
+						*ddu-source-rg-param-category*
+category	(boolean)
+	Output category item.
+
+	Default: false
+
 						*ddu-source-rg-param-cmd*
 cmd	(string)
 	Command to execute rg.
 
 	Default: "rg"
-
-					*ddu-source-rg-param-displayText*
-displayText	(boolean)
-	Display matched text.
-
-	Default: true
 
 						*ddu-source-rg-param-globs*
 globs	(string[])
