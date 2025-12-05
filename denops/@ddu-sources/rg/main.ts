@@ -248,7 +248,7 @@ export class Source extends BaseSource<Params> {
             }
 
             // Remove item path
-            item.display = item.word.replace(/^([^:]+):(\d+):(\d+):/, " ");
+            item.display = item.word.replace(/^([^:]+):(\d+):(\d+): /, "  ");
             item.highlights = [
               {
                 name: "word",
