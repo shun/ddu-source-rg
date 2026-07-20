@@ -86,6 +86,33 @@ export class Source extends BaseSource<Params> {
         const col = jo.data.submatches[0].start;
         const text = jo.data.lines.text?.replace(/\r?\n/, "");
         const header = `${path}:${lineNr}:${col}: `;
+
+        const highlights = [];
+        if (hlGroupPath !== "") {
+          highlights.push({
+            name: "path",
+            hl_group: hlGroupPath,
+            col: 1,
+            width: utf8Length(path),
+          });
+        }
+        if (hlGroupLineNr !== "") {
+          highlights.push({
+            name: "lineNr",
+            hl_group: hlGroupLineNr,
+            col: utf8Length(path) + 2,
+            width: utf8Length(String(lineNr)),
+          });
+        }
+        if (hlGroupWord !== "") {
+          highlights.push({
+            name: "word",
+            hl_group: hlGroupWord,
+            col: utf8Length(header) + col + 1,
+            width: jo.data.submatches[0].end - col,
+          });
+        }
+
         return {
           word: header + text,
           action: {
@@ -95,26 +122,7 @@ export class Source extends BaseSource<Params> {
             col: col + 1,
             text,
           },
-          highlights: [
-            {
-              name: "path",
-              hl_group: hlGroupPath,
-              col: 1,
-              width: utf8Length(path),
-            },
-            {
-              name: "lineNr",
-              hl_group: hlGroupLineNr,
-              col: utf8Length(path) + 2,
-              width: utf8Length(String(lineNr)),
-            },
-            {
-              name: "word",
-              hl_group: hlGroupWord,
-              col: utf8Length(header) + col + 1,
-              width: jo.data.submatches[0].end - col,
-            },
-          ],
+          highlights,
         };
       } catch {
         return null;
@@ -137,6 +145,32 @@ export class Source extends BaseSource<Params> {
       const textStart = utf8Length(path) + 2 + utf8Length(String(lineNr)) +
         utf8Length(String(col)) + 2;
 
+      const highlights = [];
+      if (hlGroupPath !== "") {
+        highlights.push({
+          name: "path",
+          hl_group: hlGroupPath,
+          col: 1,
+          width: utf8Length(path),
+        });
+      }
+      if (hlGroupLineNr !== "") {
+        highlights.push({
+          name: "lineNr",
+          hl_group: hlGroupLineNr,
+          col: utf8Length(path) + 2,
+          width: utf8Length(String(lineNr)),
+        });
+      }
+      if (hlGroupWord !== "") {
+        highlights.push({
+          name: "word",
+          hl_group: hlGroupWord,
+          col: textStart + col,
+          width: utf8Length(input),
+        });
+      }
+
       return {
         word: header + text,
         action: {
@@ -146,26 +180,7 @@ export class Source extends BaseSource<Params> {
           col,
           text,
         },
-        highlights: [
-          {
-            name: "path",
-            hl_group: hlGroupPath,
-            col: 1,
-            width: utf8Length(path),
-          },
-          {
-            name: "lineNr",
-            hl_group: hlGroupLineNr,
-            col: utf8Length(path) + 2,
-            width: utf8Length(String(lineNr)),
-          },
-          {
-            name: "word",
-            hl_group: hlGroupWord,
-            col: textStart + col,
-            width: utf8Length(input),
-          },
-        ],
+        highlights,
       };
     };
 
