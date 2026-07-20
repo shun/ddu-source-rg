@@ -74,49 +74,53 @@ export class Source extends BaseSource<Params> {
     const hlGroupWord = args.sourceParams.highlights?.word ?? "";
 
     const parseJson = (line: string, cwd: string) => {
-      line = line.trim();
+      try {
+        line = line.trim();
 
-      const jo = JSON.parse(line);
-      if (jo.type !== "match") {
+        const jo = JSON.parse(line);
+        if (jo.type !== "match") {
+          return null;
+        }
+        const path = jo.data.path.text;
+        const lineNr = jo.data.line_number;
+        const col = jo.data.submatches[0].start;
+        const text = jo.data.lines.text?.replace(/\r?\n/, "");
+        const header = `${path}:${lineNr}:${col}: `;
+        return {
+          word: header + text,
+          action: {
+            // When paths given, path is absolute path
+            path: path ? resolve(cwd, path) : "",
+            lineNr,
+            col: col + 1,
+            text,
+          },
+          highlights: [
+            {
+              name: "path",
+              hl_group: hlGroupPath,
+              col: 1,
+              width: utf8Length(path),
+            },
+            {
+              name: "lineNr",
+              hl_group: hlGroupLineNr,
+              col: utf8Length(path) + 2,
+              width: utf8Length(String(lineNr)),
+            },
+            {
+              name: "word",
+              hl_group: hlGroupWord,
+              col: utf8Length(header) + col + 1,
+              width: jo.data.submatches[0].end - col,
+            },
+          ],
+        };
+      } catch {
         return null;
       }
-      const path = jo.data.path.text;
-      const lineNr = jo.data.line_number;
-      const col = jo.data.submatches[0].start;
-      const text = jo.data.lines.text?.replace(/\r?\n/, "");
-      const header = `${path}:${lineNr}:${col}: `;
-      return {
-        word: header + text,
-        action: {
-          // When paths given, path is absolute path
-          path: path ? resolve(cwd, path) : "",
-          lineNr,
-          col: col + 1,
-          text,
-        },
-        highlights: [
-          {
-            name: "path",
-            hl_group: hlGroupPath,
-            col: 1,
-            width: utf8Length(path),
-          },
-          {
-            name: "lineNr",
-            hl_group: hlGroupLineNr,
-            col: utf8Length(path) + 2,
-            width: utf8Length(String(lineNr)),
-          },
-          {
-            name: "word",
-            hl_group: hlGroupWord,
-            col: utf8Length(header) + col + 1,
-            width: jo.data.submatches[0].end - col,
-          },
-        ],
-      };
     };
-    const re = /^([^:]+):(\d+):(\d+):(.*)$/;
+    const re = /^(.+?):(\d+):(\d+):(.*)$/;
     const parseLine = (line: string, cwd: string, input: string) => {
       line = line.trim();
       const result = line.match(re);
@@ -263,6 +267,8 @@ export class Source extends BaseSource<Params> {
           totalSize += 1;
         };
 
+        const useJson = args.sourceParams.args.includes("--json");
+
         try {
           for await (
             const line of abortable(
@@ -270,7 +276,7 @@ export class Source extends BaseSource<Params> {
               abortController.signal,
             )
           ) {
-            if (args.sourceParams.args.includes("--json")) {
+            if (useJson) {
               const ret = parseJson(line, cwd);
               if (ret && ret.word.length > 0) {
                 pushItem(ret);
