@@ -9,11 +9,11 @@
     ]
   },
   "imports": {
-    "@denops/std": "jsr:@denops/std@~8.0.0",
+    "@denops/std": "jsr:@denops/std@~8.2.0",
     "@shougo/ddu-kind-file": "jsr:@shougo/ddu-kind-file@~1.0.0",
-    "@shougo/ddu-vim": "jsr:@shougo/ddu-vim@~11.0.0",
-    "@std/async": "jsr:@std/async@~1.0.4",
+    "@shougo/ddu-vim": "jsr:@shougo/ddu-vim@~11.3.0",
+    "@std/async": "jsr:@std/async@~1.5.0",
     "@std/path": "jsr:@std/path@~1.1.0",
-    "@std/streams": "jsr:@std/streams@~1.0.3"
+    "@std/streams": "jsr:@std/streams@~1.1.1"
   }
 }
